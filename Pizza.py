@@ -4,8 +4,10 @@ import time
 
 # N: number of different pizza, K: max slices
 def Pizza():
-    p = np.zeros(shape=(N, K))
-    s = np.zeros(shape=(N, K))
+
+    p = np.zeros(shape=(N, int(1e7)), dtype=int)
+    s = np.zeros(shape=(N, int(1e7)), dtype=int)
+
     for n in range(0, N):
         for k in range(0, K):
             if n == k and n == 0:
@@ -33,38 +35,51 @@ def Pizza():
                     else:
                         s[n][k] = 0
 
-    k = K
-    n = 0
-    result = []
-    visited = False
-    while k > 0:
-        if not visited:
-            k -= 1
-        while n < N:
-            if s[n][k] == 1:
-                result.append(x[n])
-                k = k - x[n]
-                n = 0
-                visited = True
-            n += 1
+        k = K
+        n = 0
+        result = []
+        visited = False
+        while k > 0:
+            if not visited:
+                k -= 1
+            while n < N:
+                if s[n][k] == 1:
+                    result.append(x[n])
+                    k = k - x[n]
+                    n = 0
+                    visited = True
+                n += 1
+
     print(np.sum(result))
     print(result)
+    return result
 
 
 def main():
     global N, K, x
-    f = open("d_quite_big.in", "r")
-    contents = f.readlines()
+    name = "a_example"
+    # name = "b_small"
+    name = "c_medium"
+    #name = "d_quite_big"
 
-    K = int(contents[0].split(" ")[0])
-    N = int(contents[0].split(" ")[1]) + 1
+    fin = open(name + ".in", "r")
+    contents = fin.readlines()
+
+    K = np.long(contents[0].split(" ")[0])
+    N = np.long(contents[0].split(" ")[1]) + 1
+
     x = np.array(contents[1].split(" "), int)
     x = np.append(0, x)
-    f.close()
+    fin.close()
 
     start_time = time.time()
-    Pizza()
+    result = Pizza()
     end_time = time.time()
+
+    fout = open(name + ".out", "w+")
+    fout.write('%g\n' % len(result))
+    for i in range(0, len(result)):
+        fout.write('%g ' % result[len(result) - i - 1])
     print("The time was %g seconds" % (end_time - start_time))
 
 
