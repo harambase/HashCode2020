@@ -4,21 +4,31 @@ import time
 
 # N: number of different pizza, K: max slices
 def Pizza():
+    offset = i = 0
+    result = []
 
-    p = np.zeros(shape=(N, int(1e7)), dtype=int)
-    s = np.zeros(shape=(N, int(1e7)), dtype=int)
+    if K > 1e6:
+        while K - offset > 2e5:
+            index = len(x) - i - 1
+            offset += x[index]
+            result.append(x[index])
+            i += 1
+    print(i)
+    p = np.zeros(shape=(N - i, K - offset), dtype=int)
+    s = np.zeros(shape=(N - i, K - offset), dtype=int)
 
-    for n in range(0, N):
-        for k in range(0, K):
-            if n == k and n == 0:
+    x0 = x[0]
+    for n in range(x0, N - i):
+        for k in range(x0, K - offset):
+            if n == k and n == x0:
                 p[n][k] = 1
                 s[n][k] = 0
-            elif n == 0 and k > 0:
-                p[0][k] = 0
-                s[0][k] = 0
-            elif n > 0 and k == 0:
-                p[n][0] = 1
-                s[n][0] = 0
+            elif n == x0 and k > x0:
+                p[x0][k] = 0
+                s[x0][k] = 0
+            elif n > x0 and k == x0:
+                p[n][x0] = 1
+                s[n][x0] = 0
             else:
                 if x[n] > k:
                     p[n][k] = p[n - 1][k]
@@ -35,20 +45,19 @@ def Pizza():
                     else:
                         s[n][k] = 0
 
-        k = K
-        n = 0
-        result = []
-        visited = False
-        while k > 0:
-            if not visited:
-                k -= 1
-            while n < N:
-                if s[n][k] == 1:
-                    result.append(x[n])
-                    k = k - x[n]
-                    n = 0
-                    visited = True
-                n += 1
+    k = K - offset
+    n = 0
+    visited = False
+    while k > 0:
+        if not visited:
+            k -= 1
+        while n < N - i:
+            if s[n][k] == 1:
+                result.append(x[n])
+                k = k - x[n]
+                n = 0
+                visited = True
+            n += 1
 
     print(np.sum(result))
     print(result)
@@ -57,10 +66,11 @@ def Pizza():
 
 def main():
     global N, K, x
-    name = "a_example"
-    # name = "b_small"
-    name = "c_medium"
-    #name = "d_quite_big"
+    #name = "a_example"
+    #name = "b_small"
+    #name = "c_medium"
+    name = "d_quite_big"
+    #name = "e_also_big"
 
     fin = open(name + ".in", "r")
     contents = fin.readlines()
